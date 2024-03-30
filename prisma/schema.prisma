@@ -13,12 +13,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  DELIVERYMAN
+  ADMIN
+}
+
 model User {
   id       String   @id @default(uuid())
   name     String
   ssn      String   @unique
   password String
+  role     UserRole @default(DELIVERYMAN)
 
+  Order     Order[]
   Recipient Recipient[]
 
   @@map("users")
@@ -39,4 +46,20 @@ model Recipient {
   user User @relation(fields: [userId], references: [id])
 
   @@map("recipients")
+}
+
+model Order {
+  id                   String    @id @default(uuid())
+  userId               String
+  name                 String
+  isAvailableForPickup Boolean   @map("is_available_for_pickup")
+  hasBeenPickedUp      Boolean   @map("has_been_picked_up")
+  hasBeenDelivered     Boolean   @map("has_been_delivered")
+  hasBeenReturned      Boolean   @map("has_been_returned")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime? @updatedAt @map("updated_at")
+
+  user       User         @relation(fields: [userId], references: [id])
+
+  @@map("orders")
 }
