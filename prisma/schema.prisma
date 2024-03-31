@@ -60,6 +60,18 @@ model Order {
   updatedAt            DateTime? @updatedAt @map("updated_at")
 
   user       User         @relation(fields: [userId], references: [id])
+  Attachment Attachment[]
 
   @@map("orders")
+}
+
+model Attachment {
+  id      String @id @default(uuid())
+  title   String
+  url     String
+  orderId String @map("order_id")
+
+  order Order @relation(fields: [orderId], references: [id])
+
+  @@map("attachments")
 }
